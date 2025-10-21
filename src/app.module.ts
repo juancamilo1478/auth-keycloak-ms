@@ -4,23 +4,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entitys/user';
 import { AuthModule } from './auth/auth.module';
 import { envs } from './config';
+import { NatsModule } from './auth/transport/nast.module';
+ 
 @Module({
   imports: [
-     TypeOrmModule.forRoot({
+    NatsModule,
+    TypeOrmModule.forRoot({
       type: 'postgres', // o 'postgres'
       host: envs.host,
       port: 5432,
       username: envs.postgresUser,
       password: envs.postgresPassword,
       database: envs.dbName,
-      entities: [User],  
+      entities: [User],
       synchronize: true, // ⚠️ solo en desarrollo
       autoLoadEntities: true, // para cargar entidades automáticamente
-      schema:'auth_ms'
+      schema: 'auth_ms'
     }),
-     AuthModule,
+    AuthModule,
   ],
-  controllers: [],
-  providers: [],
+ 
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
-import { NatsModule } from 'src/transport/nast.module';
-import { envs } from 'src/config';
-import { JwtModule } from '@nestjs/jwt';
+import { NatsModule } from 'src/auth/transport/nast.module';
+ 
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/entitys/user';
+ 
 @Module({
   imports: [
     NatsModule,
-    JwtModule.register({
-      global: true,
-      secret: envs.jwtSecret,
-      signOptions: { expiresIn: '2d' }
-    })],
+    TypeOrmModule.forFeature([User]),
+
+    ],
   controllers: [AuthController],
   providers: [AuthService],
 })

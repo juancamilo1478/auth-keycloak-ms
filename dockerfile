@@ -8,6 +8,7 @@ ARG JWT_SECRET
 ARG DB_NAME
 ARG NATS_SERVERS
 ARG DATABASE_URL
+ARG KRATOS_URL
 ARG HOST
 ENV PORT=$PORT
 ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
@@ -17,6 +18,7 @@ ENV DB_NAME=$DB_NAME
 ENV NATS_SERVERS=$NATS_SERVERS
 ENV DATABASE_URL=$DATABASE_URL
 ENV HOST=$HOST
+ENV KRATOS_URL=$KRATOS_URL
 
 # 2️⃣ Dependencias del sistema
 RUN apk add --no-cache python3 make g++
@@ -38,4 +40,4 @@ COPY . .
 EXPOSE ${PORT}
 
 # 8️⃣ Iniciar sin build
-CMD ["npx", "ts-node", "src/main.ts"]
+CMD ["npm", "start"]

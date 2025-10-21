@@ -9,6 +9,7 @@ interface EnvVars {
     POSTGRES_USER:string;
     POSTGRES_PASSWORD:string;
     DB_NAME:string;
+    KRATOS_URL:string;
 }
 
 const envsShema = joi.object({
@@ -19,6 +20,7 @@ const envsShema = joi.object({
     POSTGRES_USER: joi.string().required(),
     POSTGRES_PASSWORD: joi.string().required(),
     DB_NAME: joi.string().required(),
+    KRATOS_URL:joi.string().required()
 }).unknown(true);
 
 const { error, value } = envsShema.validate({
@@ -39,4 +41,5 @@ export const envs = {
     postgresUser: envVars.POSTGRES_USER,
     postgresPassword: envVars.POSTGRES_PASSWORD,
     dbName: envVars.DB_NAME,
+    kratosurl:envVars.KRATOS_URL
 }
