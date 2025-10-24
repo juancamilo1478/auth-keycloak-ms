@@ -10,6 +10,9 @@ interface EnvVars {
     POSTGRES_PASSWORD:string;
     DB_NAME:string;
     KRATOS_URL:string;
+    ADMIN_USER:string;
+    ADMIN_PASSWORD:string;
+    KRATOS_ADMIN : string;
 }
 
 const envsShema = joi.object({
@@ -20,7 +23,10 @@ const envsShema = joi.object({
     POSTGRES_USER: joi.string().required(),
     POSTGRES_PASSWORD: joi.string().required(),
     DB_NAME: joi.string().required(),
-    KRATOS_URL:joi.string().required()
+    KRATOS_URL:joi.string().required(),
+    ADMIN_USER:joi.string().required(),
+    ADMIN_PASSWORD:joi.string().required(),
+    KRATOS_ADMIN : joi.string().required()
 }).unknown(true);
 
 const { error, value } = envsShema.validate({
@@ -41,5 +47,9 @@ export const envs = {
     postgresUser: envVars.POSTGRES_USER,
     postgresPassword: envVars.POSTGRES_PASSWORD,
     dbName: envVars.DB_NAME,
-    kratosurl:envVars.KRATOS_URL
+    kratosurl:envVars.KRATOS_URL,
+    kratosAdmin:envVars.KRATOS_ADMIN ,
+    adminUser:envVars.ADMIN_USER,
+    adminPassword:envVars.ADMIN_PASSWORD
+    
 }
