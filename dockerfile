@@ -1,6 +1,7 @@
+# --- Etapa base ---
 FROM node:18-alpine
 
-# 1️⃣ Variables de entorno
+# 1️⃣ Argumentos del build (usados opcionalmente por docker-compose build)
 ARG PORT
 ARG POSTGRES_PASSWORD
 ARG POSTGRES_USER
@@ -8,40 +9,72 @@ ARG JWT_SECRET
 ARG DB_NAME
 ARG NATS_SERVERS
 ARG DATABASE_URL
-ARG KRATOS_URL
 ARG HOST
-ARG ADMIN_USER
-ARG KRATOS_ADMIN 
-ENV ADMIN_USER=$ADMIN_USER
-ENV PORT=$PORT
-ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-ENV POSTGRES_USER=$POSTGRES_USER
-ENV JWT_SECRET=$JWT_SECRET
-ENV DB_NAME=$DB_NAME
-ENV NATS_SERVERS=$NATS_SERVERS
-ENV DATABASE_URL=$DATABASE_URL
-ENV HOST=$HOST
-ENV KRATOS_URL=$KRATOS_URL
-ENV KRATOS_ADMIN = ${KRATOS_ADMIN}
+ARG GOOGLE_CLIENT_ID
 
-# 2️⃣ Dependencias del sistema
+# --- Keycloak ARGs ---
+ARG KEYCLOAK_DOMAIN
+ARG KEYCLOAK_REALM
+ARG KEYCLOAK_CLIENT_ID
+ARG KEYCLOAK_CLIENT_SECRET
+ARG KEYCLOAK_LOGIN_URL
+ARG KEYCLOAK_ADMIN_BASE_URL
+ARG KEYCLOAK_ADMIN_CLIENT_ID
+ARG KEYCLOAK_ADMIN_CLIENT_SECRET
+ARG KEYCLOAK_ADMIN_LINK_LIFESPAN
+ARG KEYCLOAK_ADMIN_REDIRECT_URI
+ARG KEYCLOAK_CLIENT_LOGIN_CLIENT_ID
+ARG KEYCLOAK_CLIENT_LOGIN_CLIENT_SECRET
+ARG DATABASE_HOST
+ARG DATABASE_PORT
+
+# 2️⃣ Variables de entorno (sin espacios en los "=")
+ENV PORT=$PORT \
+    POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+    POSTGRES_USER=$POSTGRES_USER \
+    JWT_SECRET=$JWT_SECRET \
+    DB_NAME=$DB_NAME \
+    NATS_SERVERS=$NATS_SERVERS \
+    DATABASE_URL=$DATABASE_URL \
+    HOST=$HOST \
+    GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
+    KEYCLOAK_DOMAIN=$KEYCLOAK_DOMAIN \
+    KEYCLOAK_REALM=$KEYCLOAK_REALM \
+    KEYCLOAK_CLIENT_ID=$KEYCLOAK_CLIENT_ID \
+    KEYCLOAK_CLIENT_SECRET=$KEYCLOAK_CLIENT_SECRET \
+    KEYCLOAK_LOGIN_URL=$KEYCLOAK_LOGIN_URL \
+    KEYCLOAK_ADMIN_BASE_URL=$KEYCLOAK_ADMIN_BASE_URL \
+    KEYCLOAK_ADMIN_CLIENT_ID=$KEYCLOAK_ADMIN_CLIENT_ID \
+    KEYCLOAK_ADMIN_CLIENT_SECRET=$KEYCLOAK_ADMIN_CLIENT_SECRET \
+    KEYCLOAK_ADMIN_LINK_LIFESPAN=$KEYCLOAK_ADMIN_LINK_LIFESPAN \
+    KEYCLOAK_ADMIN_REDIRECT_URI=$KEYCLOAK_ADMIN_REDIRECT_URI \
+    KEYCLOAK_CLIENT_LOGIN_CLIENT_ID=$KEYCLOAK_CLIENT_LOGIN_CLIENT_ID \
+    KEYCLOAK_CLIENT_LOGIN_CLIENT_SECRET=$KEYCLOAK_CLIENT_LOGIN_CLIENT_SECRET \
+    DATABASE_HOST=$DATABASE_HOST \
+    DATABASE_PORT=$DATABASE_PORT
+
+# 3️⃣ Dependencias del sistema
 RUN apk add --no-cache python3 make g++
 
-# 3️⃣ Directorio de trabajo
+# 4️⃣ Directorio de trabajo
 WORKDIR /usr/src/app
 
-# 4️⃣ Copiar dependencias e instalarlas
+# 5️⃣ Copiar dependencias e instalarlas
 COPY package*.json ./
 RUN npm install
 
-# 5️⃣ Instalar ts-node (para ejecutar .ts directamente)
+# 6️⃣ Instalar herramientas globales (NestJS CLI + TypeScript)
 RUN npm install -g ts-node typescript @nestjs/cli
 
-# 6️⃣ Copiar el resto del código fuente
+# 7️⃣ Copiar el resto del código fuente
 COPY . .
 
-# 7️⃣ Exponer el puerto
+# 8️⃣ Exponer el puerto del microservicio
 EXPOSE ${PORT}
 
-# 8️⃣ Iniciar sin build
-CMD ["npm", "start"]
+# 9️⃣ Comando de inicio
+# Para desarrollo (hot reload):
+CMD ["npm", "run", "start:dev"]
+
+# Si fuera producción (sin hot reload):
+# CMD ["npm", "run", "start:prod"]

@@ -5,6 +5,7 @@ import { User } from './entitys/user';
 import { AuthModule } from './auth/auth.module';
 import { envs } from './config';
 import { NatsModule } from './auth/transport/nast.module';
+import { KeycloakModule } from './keycloak/keycloak.module';
  
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { NatsModule } from './auth/transport/nast.module';
       schema: 'auth_ms'
     }),
     AuthModule,
+    KeycloakModule,
   ],
  
 })
