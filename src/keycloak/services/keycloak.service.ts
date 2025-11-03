@@ -10,6 +10,8 @@ import { envs } from 'src/config';
 import { RpcException } from '@nestjs/microservices';
 import { RoleDataDto } from '../dto/role-data.dto';
 import { loginUserDto } from '../dto/login-user.dto';
+import * as jwt from 'jsonwebtoken';
+import { UserLoginDtoResponse } from '../dto/user-login.dto';
 
 @Injectable()
 export class KeycloakService {
@@ -86,35 +88,48 @@ export class KeycloakService {
         try {
             const { username, password } = data;
             const formData = new URLSearchParams();
-            console.log('client id', envs.keycloak.clientId);
-            formData.append('client_id', envs.keycloak.clientLOGINId);
-            // formData.append('client_secret', envs.keycloak.clientLOGINSecret);
-  
             formData.append('username', username);
             formData.append('password', password);
             formData.append('grant_type', 'password');
-            
-            console.log('url', envs.keycloak.loginUrl);
+            formData.append('client_id', envs.keycloak.clientLOGINId);
+            formData.append('client_secret', envs.keycloak.clientLOGINSecret);
+            formData.append('scope', 'openid');
             const response = await firstValueFrom(
                 this.httpService.post(envs.keycloak.loginUrl, formData.toString(), {
-                    headers: {
-                        'Content-Type': `application/x-www-form-urlencoded`
-                    }
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
                 })
             );
+            const decoded: any = jwt.decode(response.data.access_token);
+            const userData: UserLoginDtoResponse = {
+                token: response.data,
+                user: {
+                    username: decoded.preferred_username,
+                    roles: decoded.realm_access.roles,
+                    email: decoded.email,
+                    name: decoded.name
+                }
+            }
             return {
                 status: 200,
                 message: 'Login successful',
-                data: response.data
-            }
+                data: userData
+            };
 
         } catch (error) {
-            throw new RpcException({
-                status: 400,
-                message: error.message
-            })
-        }
+            // 📜 Log completo del error para debugging
+            console.error('🔴 Error Keycloak login:', {
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                data: error.response?.data,
+                message: error.message,
+            });
 
+            // Lanzamos el error de forma más clara para NestJS
+            throw new RpcException({
+                status: error.response?.status || 500,
+                message: error.response?.data?.error_description || error.message || 'Unexpected error'
+            });
+        }
     }
 
 
@@ -161,6 +176,7 @@ export class KeycloakService {
     async getadmintoken(): Promise<string> {
         try {
 
+
             const formData = new URLSearchParams();
             formData.append('client_id', envs.keycloak.adminClientId);
             formData.append('client_secret', envs.keycloak.adminClientSecret);
@@ -180,4 +196,52 @@ export class KeycloakService {
             throw new Error('Error creating user in Keycloak');
         }
     }
+
+    async refreshToken(refresh_token: string) {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('client_id', envs.keycloak.clientLOGINId);
+            formData.append('client_secret', envs.keycloak.clientLOGINSecret);
+            formData.append('grant_type', 'refresh_token');
+            formData.append('refresh_token', refresh_token);
+            const response = await firstValueFrom(
+                this.httpService.post(envs.keycloak.loginUrl, formData.toString(), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                }),
+            );
+
+            return response.data;
+        }
+        catch (error) {
+            throw new Error('Error refreshing token');
+        }
+    }
+
+
+    async validToken(token: string) {
+        try {
+            const formData = new URLSearchParams();
+            formData.append('token', token);
+            formData.append('client_id', envs.keycloak.adminClientId);
+            formData.append('client_secret', envs.keycloak.adminClientSecret);
+
+            const introspectUrl = `${envs.keycloak.domain}/realms/${envs.keycloak.realm}/protocol/openid-connect/token/introspect`;
+
+            const response = await firstValueFrom(
+                this.httpService.post(introspectUrl, formData.toString(), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                }),
+            );
+
+            return response.data; // Devuelve el resultado del introspect
+        } catch (error) {
+            console.error('Error validando token:', error.message);
+            throw new Error('Token inválido o error en la introspección');
+        }
+    }
+
 }

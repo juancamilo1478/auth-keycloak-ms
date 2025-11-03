@@ -25,5 +25,15 @@ export class KeycloakController {
       return this.keycloakService.login(data);
     }
 
+    @MessagePattern('auth-ms.keycloak.valid.token')
+    validateToken(  {token}:{token:string} ){
+      return this.keycloakService.validToken(token);
+    }
+
+    @MessagePattern('auth-ms.keycloak.refresh.token')
+    refreshToken(  {refreshToken}:{refreshToken:string} ){
+      return this.keycloakService.refreshToken(refreshToken);
+    }
+
   
 }

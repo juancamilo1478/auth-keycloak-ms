@@ -27,6 +27,7 @@ interface EnvVars {
   DATABASE_HOST: string;
   DATABASE_PORT: number;
   KEYCLOAK_CLIENT_SECRET: string;
+   
 }
 
 // 2️⃣ Validación con Joi
@@ -40,7 +41,7 @@ const envsSchema = joi
     POSTGRES_PASSWORD: joi.string().required(),
     DB_NAME: joi.string().required(),
     GOOGLE_CLIENT_ID: joi.string().required(),
-
+   
     // --- Keycloak ---
     KEYCLOAK_DOMAIN: joi.string().uri().required(),
     KEYCLOAK_REALM: joi.string().required(),
