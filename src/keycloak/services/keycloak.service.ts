@@ -156,7 +156,7 @@ export class KeycloakService {
     async getRole(token: string, roleName: string): Promise<RoleDataDto> {
         try {
             const realmRolesResponse = await firstValueFrom(
-                this.httpService.get(`${envs.keycloak.domain}/admin/realms/nestjs-tutorial/roles/${roleName}`, {
+                this.httpService.get(`${envs.keycloak.domain}/admin/realms/${envs.keycloak.realm}/roles/${roleName}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
             );
