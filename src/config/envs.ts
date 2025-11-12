@@ -24,8 +24,7 @@ interface EnvVars {
   KEYCLOAK_ADMIN_REDIRECT_URI: string;
   KEYCLOAK_CLIENT_LOGIN_CLIENT_ID: string;
   KEYCLOAK_CLIENT_LOGIN_CLIENT_SECRET: string;
-  DATABASE_HOST: string;
-  DATABASE_PORT: number;
+
   KEYCLOAK_CLIENT_SECRET: string;
 
 }
@@ -54,8 +53,7 @@ const envsSchema = joi
     KEYCLOAK_ADMIN_REDIRECT_URI: joi.string().uri().required(),
     KEYCLOAK_CLIENT_LOGIN_CLIENT_ID: joi.string().required(),
     KEYCLOAK_CLIENT_LOGIN_CLIENT_SECRET: joi.string().required(),
-    DATABASE_HOST: joi.string().required(),
-    DATABASE_PORT: joi.number().required(),
+
     KEYCLOAK_CLIENT_SECRET: joi.string().required(),
   })
   .unknown(true); // permite otras variables
