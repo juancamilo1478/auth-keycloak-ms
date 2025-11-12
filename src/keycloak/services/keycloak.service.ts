@@ -38,6 +38,7 @@ export class KeycloakService {
             const userdata = new userRepresentationDto();
             userdata.username = username;
             userdata.firstName = firstName;
+            userdata.email = username;
             userdata.lastName = lastName;
             userdata.emailVerified = true;
             userdata.enabled = true;
@@ -50,7 +51,7 @@ export class KeycloakService {
 
             userdata.credentials = [credential];
             userdata.enabled = true;
-            userdata.emailVerified = false;
+            userdata.emailVerified = true;
 
             const response = await firstValueFrom(this.httpService.post(`${envs.keycloak.adminBaseUrl}/users`, userdata, {
                 headers: {
