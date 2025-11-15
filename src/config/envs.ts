@@ -10,7 +10,7 @@ interface EnvVars {
   POSTGRES_USER: string;
   POSTGRES_PASSWORD: string;
   DB_NAME: string;
-  GOOGLE_CLIENT_ID: string;
+
 
   // --- Keycloak ---
   KEYCLOAK_DOMAIN: string;
@@ -39,7 +39,6 @@ const envsSchema = joi
     POSTGRES_USER: joi.string().required(),
     POSTGRES_PASSWORD: joi.string().required(),
     DB_NAME: joi.string().required(),
-    GOOGLE_CLIENT_ID: joi.string().required(),
 
     // --- Keycloak ---
     KEYCLOAK_DOMAIN: joi.string().uri().required(),
@@ -79,7 +78,7 @@ export const envs = {
   postgresUser: envVars.POSTGRES_USER,
   postgresPassword: envVars.POSTGRES_PASSWORD,
   dbName: envVars.DB_NAME,
-  googleClientId: envVars.GOOGLE_CLIENT_ID,
+
 
   // --- Keycloak ---
   keycloak: {

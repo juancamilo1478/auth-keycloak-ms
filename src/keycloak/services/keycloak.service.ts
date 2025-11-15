@@ -85,6 +85,9 @@ export class KeycloakService {
         }
     }
 
+
+
+
     async login(data: loginUserDto) {
         try {
             const { username, password } = data;
@@ -94,7 +97,9 @@ export class KeycloakService {
             formData.append('grant_type', 'password');
             formData.append('client_id', envs.keycloak.clientLOGINId);
             formData.append('client_secret', envs.keycloak.clientLOGINSecret);
-            formData.append('scope', 'openid');
+            // parametro importante para menejar token con los tiempos de offline session especialmente para apps moviles
+            formData.append('scope', 'openid offline_access profile email');
+
             const response = await firstValueFrom(
                 this.httpService.post(envs.keycloak.loginUrl, formData.toString(), {
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
