@@ -1,11 +1,11 @@
-import { Injectable,  } from '@nestjs/common';
+import { Injectable, } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entitys/user';
 import { Repository } from 'typeorm';
- 
+
 import { HttpService } from '@nestjs/axios';
 import { CreateUserDto } from '../dto/User.dto';
- 
+
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly httpService: HttpService,
-       
+
     ) {
     }
 
@@ -25,12 +25,12 @@ export class AuthService {
         })
     }
 
-  
-    
 
-    
 
-   
+
+
+
+
 
     async example() {
         return { message: 'example response from auth-ms' }

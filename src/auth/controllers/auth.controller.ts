@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
-import { MessagePattern  } from '@nestjs/microservices';
+import { MessagePattern } from '@nestjs/microservices';
 import { CreateUserDto } from '../dto/User.dto';
- 
+
 
 @Controller()
 export class AuthController {
@@ -14,5 +14,8 @@ export class AuthController {
     return this.authService.example();
   }
 
- 
+  @MessagePattern('auth-ms.example-123')
+  edituser123() {
+    return "exanoke 123"
+  }
 }
