@@ -2,11 +2,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entitys/user';
-import { AuthModule } from './auth/auth.module';
 import { envs } from './config';
-import { NatsModule } from './auth/transport/nast.module';
 import { KeycloakModule } from './keycloak/keycloak.module';
- 
+import { NatsModule } from './transport/nast.module';
+
 @Module({
   imports: [
     NatsModule,
@@ -22,9 +21,8 @@ import { KeycloakModule } from './keycloak/keycloak.module';
       autoLoadEntities: true, // para cargar entidades automáticamente
       schema: 'auth_ms'
     }),
-    AuthModule,
     KeycloakModule,
   ],
- 
+
 })
 export class AppModule { }

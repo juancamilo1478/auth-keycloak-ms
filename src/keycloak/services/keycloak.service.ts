@@ -84,8 +84,57 @@ export class KeycloakService {
             })
         }
     }
+    async addRolName(rol: RoleDataDto, token: string, userId: string) {
+        try {
+            const response = await firstValueFrom(
+
+                this.httpService.post(`${envs.keycloak.domain}/admin/realms/${envs.keycloak.realm}/users/${userId}/role-mappings/realm`, [rol], {
+                    headers: { Authorization: `Bearer ${token}` },
+                }),
+            );
 
 
+            return "Rol asignado";
+        } catch (error) {
+            const status = error.response?.status;
+            const data = error.response?.data;
+
+            console.error('Keycloak Error:', {
+                status,
+                data
+            });
+
+            throw new Error(`Keycloak error: ${JSON.stringify(data || error.message)}`);
+        }
+    }
+
+
+
+    async addRollNurse(userId: string, roleName: string) {
+        try {
+            let token = await this.getadmintoken()
+            let roles = await this.getRolesUser(userId, token);
+            const exists = roles.some(role => role.name === roleName);
+            if (exists) {
+                return {
+                    status: 200,
+                    data: "Ya tiene rol"
+                }
+            }
+            let roleNurse = await this.getRole(token, 'nurse');
+            const responseaddRole = await this.addRolName(roleNurse, token, userId)
+            return {
+                status: 200,
+                data: responseaddRole
+            }
+        } catch (error) {
+            throw new RpcException({
+                status: 400,
+                message: error.message
+            })
+        }
+
+    }
 
 
     async login(data: loginUserDto) {
@@ -158,6 +207,32 @@ export class KeycloakService {
         }
     }
 
+
+    async getRolesUser(userId: string, token: string): Promise<RoleDataDto[]> {
+        try {
+            const response = await firstValueFrom(
+                this.httpService.get<RoleDataDto[]>(`${envs.keycloak.domain}/admin/realms/${envs.keycloak.realm}/users/${userId}/role-mappings/realm`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                }),
+            );
+            const assignedRoles = response.data;
+            if (!assignedRoles) {
+                throw new Error('No roles found');
+            }
+
+            return assignedRoles;
+        } catch (error) {
+            const status = error.response?.status;
+            const data = error.response?.data;
+
+            console.error('Keycloak Error:', {
+                status,
+                data
+            });
+
+            throw new Error(`Keycloak error: ${JSON.stringify(data || error.message)}`);
+        }
+    }
 
     async getRole(token: string, roleName: string): Promise<RoleDataDto> {
         try {

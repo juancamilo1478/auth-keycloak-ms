@@ -34,5 +34,11 @@ export class KeycloakController {
     return this.keycloakService.refreshToken(refreshToken);
   }
 
+  @MessagePattern('auth-ms.keycloak.add.nurse.role')
+  addRoleNurse({ userId }: { userId: string, }) {
+    return this.keycloakService.addRollNurse(userId, "nurse");
+  }
+
+
 
 }
